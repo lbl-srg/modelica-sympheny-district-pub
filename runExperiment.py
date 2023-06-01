@@ -73,12 +73,22 @@ def printResults(mat_file):
     EHeaHos = ofr.integral('bui[3].bui.QReqHea_flow')
 
     SPFHea = (ESHWOff + ESHWRes + ESHWHos + EHeaOff + EHeaRes + EHeaHos)/EHeaPum
-    print(f"Seasonal performance factor of all heat pumps: {SPFHea}")
+    print(f"Seasonal performance factor of all heat pumps: {SPFHea:g}")
+
+    # Constraint violation
+    class bcolors:
+        OKGREEN = '\033[92m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+    (time, conVio_t) = ofr.values('conVio.y')
+    conVio = conVio_t[-1]
+    col = bcolors.OKGREEN if conVio < 1E-5 else bcolors.FAIL
+    print(f"{col}Constraint violation {conVio:g}.{bcolors.ENDC}")
 
 if __name__ == '__main__':
 
     model = "District.System"
     s = Simulator(model)
 
-    #simulateCase(s)
+    simulateCase(s)
     printResults('System.mat')
