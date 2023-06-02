@@ -113,9 +113,13 @@ def printResults(mat_file):
     print(f"{col}Constraint violation {conVio:g}.{bcolors.ENDC}")
 
 if __name__ == '__main__':
+    # If run with -p, no simulation is done.
+    import sys
+    skip_simulation = len(sys.argv) > 0 and sys.argv[1] == '-p'
 
-    model = "District.System"
-    s = Simulator(model)
+    if not skip_simulation:
+        model = "District.System"
+        s = Simulator(model)
+        simulateCase(s)
 
-    simulateCase(s)
     printResults('System.mat')
