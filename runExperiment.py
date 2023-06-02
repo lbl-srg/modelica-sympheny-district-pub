@@ -71,18 +71,32 @@ def printResults(mat_file):
     print(f"Sewage heat, rejected from loop to sewage if positive: {QSew:g} W")
 
     # Heat pumps SPF
-    EHeaPum = ofr.max('EHeaPum.y') # electrical energy of all heat pumps
+    EEleHeaPumHeaOff = ofr.integral('bui[1].ets.proHeaWat.heaPum.P')
+    EEleHeaPumHeaRes = ofr.integral('bui[2].ets.proHeaWat.heaPum.P')
+    EEleHeaPumHeaHos = ofr.integral('bui[3].ets.proHeaWat.heaPum.P')
 
-    # Service hot water load
-    ESHWOff = ofr.integral('bui[1].bui.QReqHotWat_flow')
-    ESHWRes = ofr.integral('bui[2].bui.QReqHotWat_flow')
-    ESHWHos = ofr.integral('bui[3].bui.QReqHotWat_flow')
+    EEleHeaPumSHWOff = ofr.integral('bui[1].ets.proHotWat.heaPum.P')
+    EEleHeaPumSHWRes = ofr.integral('bui[2].ets.proHotWat.heaPum.P')
+    EEleHeaPumSHWHos = ofr.integral('bui[3].ets.proHotWat.heaPum.P')
+
+
+    EEleHeaPum = EEleHeaPumHeaOff + EEleHeaPumHeaRes + EEleHeaPumHeaHos \
+               + EEleHeaPumSHWOff + EEleHeaPumSHWRes + EEleHeaPumSHWHos # electrical energy of all heat pumps
+
     # Space heating load
     EHeaOff = ofr.integral('bui[1].bui.QReqHea_flow')
     EHeaRes = ofr.integral('bui[2].bui.QReqHea_flow')
     EHeaHos = ofr.integral('bui[3].bui.QReqHea_flow')
 
-    SPFHea = (ESHWOff + ESHWRes + ESHWHos + EHeaOff + EHeaRes + EHeaHos)/EHeaPum
+    # Service hot water load
+    ESHWOff = ofr.integral('bui[1].bui.QReqHotWat_flow')
+    ESHWRes = ofr.integral('bui[2].bui.QReqHotWat_flow')
+    ESHWHos = ofr.integral('bui[3].bui.QReqHotWat_flow')
+
+    SPFHea = (ESHWOff + ESHWRes + ESHWHos + EHeaOff + EHeaRes + EHeaHos)/EEleHeaPum
+
+    print(f"SPF of heat pumps (space heating)    : {EHeaOff/EEleHeaPumHeaOff:g}, {EHeaRes/EEleHeaPumHeaRes:g}, {EHeaHos/EEleHeaPumHeaHos:g} (office, residential, hospital)")
+    print(f"SPF of heat pumps (service hot water): {ESHWOff/EEleHeaPumSHWOff:g}, {ESHWRes/EEleHeaPumSHWRes:g}, {ESHWHos/EEleHeaPumSHWHos:g} (office, residential, hospital)")
     print(f"Seasonal performance factor of all heat pumps: {SPFHea:g}")
 
     # Constraint violation
@@ -103,5 +117,5 @@ if __name__ == '__main__':
     model = "District.System"
     s = Simulator(model)
 
-    #simulateCase(s)
+    simulateCase(s)
     printResults('System.mat')
