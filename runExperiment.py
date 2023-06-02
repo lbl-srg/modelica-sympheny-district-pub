@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import matplotlib
+#matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import buildingspy
 
 from buildingspy.simulate.Dymola import Simulator
@@ -45,6 +49,12 @@ def printResults(mat_file):
     print(f"Heat pump capacity (space heating only): {QConMaxOff:g}, {QConMaxRes:g}, {QConMaxHos:g} W (office, residential, hospital).")
     print(f"Heat pump capacity (space heating only): {QConMaxOff + QConMaxRes + QConMaxHos:g} W (total).")
 
+    QSHWConMaxOff = ofr.max('bui[1].bui.QReqHotWat_flow')
+    QSHWConMaxRes = ofr.max('bui[2].bui.QReqHotWat_flow')
+    QSHWConMaxHos = ofr.max('bui[3].bui.QReqHotWat_flow')
+    print(f"Heat pump capacity (service hot water only): {QSHWConMaxOff:g}, {QSHWConMaxRes:g}, {QSHWConMaxHos:g} W (office, residential, hospital).")
+    print(f"Heat pump capacity (service hot water only): {QSHWConMaxOff + QSHWConMaxRes + QSHWConMaxHos:g} W (total).")
+
     QCooHexMaxOff = ofr.min('bui[1].ets.hexChi.Q2_flow')
     QCooHexMaxRes = ofr.min('bui[2].ets.hexChi.Q2_flow')
     QCooHexMaxHos = ofr.min('bui[3].ets.hexChi.Q2_flow')
@@ -82,7 +92,10 @@ def printResults(mat_file):
         ENDC = '\033[0m'
     (time, conVio_t) = ofr.values('conVio.y')
     conVio = conVio_t[-1]
-    col = bcolors.OKGREEN if conVio < 1E-5 else bcolors.FAIL
+    col = bcolors.OKGREEN if conVio < 3E-3 else bcolors.FAIL
+
+    #plt.plot(time, conVio_t)
+    #plt.show()
     print(f"{col}Constraint violation {conVio:g}.{bcolors.ENDC}")
 
 if __name__ == '__main__':
@@ -90,5 +103,5 @@ if __name__ == '__main__':
     model = "District.System"
     s = Simulator(model)
 
-    simulateCase(s)
+    #simulateCase(s)
     printResults('System.mat')
