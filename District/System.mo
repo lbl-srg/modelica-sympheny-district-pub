@@ -59,6 +59,7 @@ model System "System model"
   Modelica.Blocks.Continuous.Integrator EBorFie(initType=Modelica.Blocks.Types.Init.InitialState)
     "Energy of borefield (relative to initial conditions)"
     annotation (Placement(transformation(extent={{220,-190},{240,-170}})));
+
 equation
   for i in 1:nBui loop
   connect(PHVAC[i].u[1], bui[i].PPumETS) annotation (Line(points={{58,303.333},
