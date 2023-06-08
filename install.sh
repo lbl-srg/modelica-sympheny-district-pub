@@ -1,4 +1,9 @@
 #!/bin/bash
+#######################################################
+# Script that installs the Modelica Buildings Library
+# and BuildingsPy versions that are used to run the
+# experiments.
+#######################################################
 set -e
 sha="444f378049ddc0cdc63f0978194a4786d139fdd0"
 rm -rf ${sha}.zip modelica-buildings-${sha}
