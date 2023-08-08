@@ -95,8 +95,10 @@ def printResults(mat_file):
 
     SPFHea = (ESHWOff + ESHWRes + ESHWHos + EHeaOff + EHeaRes + EHeaHos)/EEleHeaPum
 
-    print(f"SPF of heat pumps (space heating)    : {EHeaOff/EEleHeaPumHeaOff:g}, {EHeaRes/EEleHeaPumHeaRes:g}, {EHeaHos/EEleHeaPumHeaHos:g} (office, residential, hospital)")
-    print(f"SPF of heat pumps (service hot water): {ESHWOff/EEleHeaPumSHWOff:g}, {ESHWRes/EEleHeaPumSHWRes:g}, {ESHWHos/EEleHeaPumSHWHos:g} (office, residential, hospital)")
+    print(f"SPF of heat pumps (space heating)    : {EHeaOff/EEleHeaPumHeaOff:g}, {EHeaRes/EEleHeaPumHeaRes:g}, {EHeaHos/EEleHeaPumHeaHos:g}, \
+        {(EHeaOff + EHeaRes + EHeaHos)/(EEleHeaPumHeaOff + EEleHeaPumHeaRes + EEleHeaPumHeaHos):g} (office, residential, hospital, total)")
+    print(f"SPF of heat pumps (service hot water): {ESHWOff/EEleHeaPumSHWOff:g}, {ESHWRes/EEleHeaPumSHWRes:g}, {ESHWHos/EEleHeaPumSHWHos:g}, \
+        {(ESHWOff + ESHWRes + ESHWHos)/(EEleHeaPumSHWOff + EEleHeaPumSHWRes + EEleHeaPumSHWHos):g} (office, residential, hospital, total)")
     print(f"Seasonal performance factor of all heat pumps: {SPFHea:g}")
 
     # Constraint violation
@@ -115,7 +117,7 @@ def printResults(mat_file):
 if __name__ == '__main__':
     # If run with -p, no simulation is done.
     import sys
-    skip_simulation = len(sys.argv) > 0 and sys.argv[1] == '-p'
+    skip_simulation = len(sys.argv) > 1 and sys.argv[1] == '-p'
 
     if not skip_simulation:
         model = "District.System"
